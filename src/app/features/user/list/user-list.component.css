@@ -1,0 +1,16 @@
+.btn-success {
+    background-color: #28a745; 
+    color: #ffffff; 
+  }
+
+.css-grid-table-body{
+  word-break: break-all;
+}
+
+.sort-icon {
+  cursor: pointer;
+}
+
+.content{
+  padding-top: 48px;
+}

@@ -1,0 +1,224 @@
+<main>
+  <div class="container">
+    <app-header></app-header>
+    <div class="content">
+      <div class="content-main">
+        <div class="row">
+          <form [formGroup]="userForm" class="c-form box-shadow" (ngSubmit)="handleOk()" novalidate>
+            <ul>
+              <li class="title">会員情報編集</li>
+              <li class="box-err">
+                <div *ngIf="showError" class="box-err">
+                  <div class="box-err-content">{{ errorMessage }}</div>
+                </div>              
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">アカウント名:<span class="note-red">*</span></i></label>
+                <div class="col-sm col-sm-10" >
+                <!-- Hiển thị thông báo lỗi -->
+                  <input maxlength="50" #firstField type="text" class="form-control" formControlName="employeeLoginId" [class.is-invalid]="employeeLoginIdControl.invalid && employeeLoginIdControl.touched"
+                  [required]="employeeLoginIdControl.touched && employeeLoginIdControl.invalid" [readOnly]="employeeId">
+                  <ng-container *ngIf="employeeLoginIdControl.invalid && (employeeLoginIdControl.dirty || employeeLoginIdControl.touched)">
+                    <div *ngIf="employeeLoginIdControl.hasError('required')" class="text-danger">{{appConstants.ER001('アカウント名')}}</div>
+                    <div *ngIf="employeeLoginIdControl.hasError('maxlength')" class="text-danger">{{appConstants.ER006('アカウント名', '50')}}</div>
+                    <div *ngIf="employeeLoginIdControl.hasError('pattern')" class="text-danger">{{appConstants.ER019('アカウント名')}}</div>
+                  </ng-container>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">グループ:<span class="note-red">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10">
+                  <select class="form-control" formControlName="departmentName">
+                    <option value="">選択してください</option>
+                    <option *ngFor="let de of listDepartments" [value]="de.departmentName">
+                      {{ de.departmentName }}
+                    </option>
+                  </select>
+                  <div *ngIf="departmentNameControl.invalid && (departmentNameControl.dirty || departmentNameControl.touched)" class="col-sm-10 offset-sm-2 text-danger">
+                    <div *ngIf="departmentNameControl.hasError('required')" class="text-danger">{{appConstants.ER001('グループ')}}</div>
+                  </div>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"
+                  ><i class="relative"
+                    >氏名:<span class="note-red">*</span></i
+                  ></label
+                >
+                <div class="col-sm col-sm-10">
+                  <input maxlength="125" type="text" class="form-control" formControlName="employeeName" />
+                  <!-- Hiển thị thông báo lỗi -->
+                  <ng-container *ngIf="employeeNameControl.invalid && (employeeNameControl.dirty || employeeNameControl.touched)">
+                    <div *ngIf="employeeNameControl.hasError('required')" class="text-danger">{{appConstants.ER001('氏名')}}</div>
+                    <div *ngIf="employeeNameControl.hasError('maxlength')" class="text-danger">{{appConstants.ER006('氏名', '125')}}</div>
+                  </ng-container>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">カタカナ氏名:<span class="note-red">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10">
+                  <input type="text" class="form-control" [class.is-invalid]="katakanaNameControl.invalid && (katakanaNameControl.dirty || katakanaNameControl.touched)" formControlName="employeeNameKana" maxlength="125"/>
+                  <!-- Hiển thị thông báo lỗi -->
+                  <ng-container *ngIf="katakanaNameControl.invalid && (katakanaNameControl.dirty || katakanaNameControl.touched)" class="invalid-feedback">
+                    <div *ngIf="katakanaNameControl.hasError('required')" class="text-danger">{{appConstants.ER001('カタカナ氏名')}}</div>
+                    <div *ngIf="katakanaNameControl.hasError('maxLength')" class="text-danger">{{appConstants.ER006('カタカナ氏名', '125')}}</div>
+                    <div *ngIf="katakanaNameControl.hasError('invalidKatakana')" class="text-danger">{{appConstants.ER009('カタカナ氏名')}}</div>
+                  </ng-container>
+                </div>
+              </li>              
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">生年月日:<span class="note-red">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10 d-flex">
+                  <div class="input-group date datepicker" data-date-format="yyyy/mm/dd">
+                    <input
+                      class="form-control"
+                      readonly=""
+                      type="text"
+                      bsDatepicker
+                      formControlName="employeeBirthDate"
+                      [bsConfig]="datepickerConfig"
+                    />
+                    <!-- Hiển thị thông báo lỗi -->
+                    <div *ngIf="employeeBirthDateControl.invalid && (employeeBirthDateControl.dirty || employeeBirthDateControl.touched)" class="col-sm-10 offset-sm-2 text-danger">
+                      <div *ngIf="employeeBirthDateControl.hasError('required')">{{appConstants.ER001('生年月日')}}</div>
+                      <div *ngIf="employeeBirthDateControl.hasError('invalidBirthDate')">生年月日を現在の日付より大きくすることはできません。</div>
+                    </div>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                  </div>
+                </div>
+              </li>                           
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">メールアドレス:<span class="note-red">*</span></i></label>
+                <div class="col-sm col-sm-10">
+                  <input type="text" class="form-control" formControlName="employeeEmail" [required]="isRequired('email')" maxlength="125"/>
+                 <!-- Hiển thị thông báo lỗi -->
+                  <ng-container *ngIf="employeeEmailControl.invalid && (employeeEmailControl.dirty || employeeEmailControl.touched)">
+                    <div *ngIf="employeeEmailControl.hasError('required')" class="text-danger">{{appConstants.ER001('メールアドレス')}}</div>
+                    <div *ngIf="employeeEmailControl.hasError('maxlength')" class="text-danger">{{appConstants.ER006('メールアドレス', '125')}}</div>
+                    <div *ngIf="employeeEmailControl.hasError('pattern')" class="text-danger">{{appConstants.ER005('メールアドレス', 'email')}}</div>
+                  </ng-container>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">電話番号:<span class="note-red">*</span></i></label>
+                <div class="col-sm col-sm-10">
+                  <input type="text" class="form-control" formControlName="employeeTelephone" required maxlength="50"/>
+                  <!-- Hiển thị thông báo lỗi -->
+                  <div *ngIf="employeeTelephoneControl.invalid && (employeeTelephoneControl.dirty || employeeTelephoneControl.touched)">
+                    <div *ngIf="employeeTelephoneControl.hasError('required')" class="text-danger">{{appConstants.ER001('電話番号')}}</div>
+                    <div *ngIf="employeeTelephoneControl.hasError('pattern')" class="text-danger">{{appConstants.ER008('電話番号')}}</div>
+                    <div *ngIf="employeeTelephoneControl.hasError('maxlength')" class="text-danger">{{appConstants.ER006('電話番号', '50')}}</div>
+                  </div>
+                </div>
+              </li>       
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">パスワード:<span class="note-red">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10">
+                  <input type="password" class="form-control" formControlName="employeeLoginPassword" maxlength="50" minlength="8" />
+                  <!-- Hiển thị thông báo lỗi -->
+                  <div *ngIf="employeeLoginPasswordControl.invalid && (employeeLoginPasswordControl.dirty || employeeLoginPasswordControl.touched)">
+                    <div *ngIf="employeeLoginPasswordControl.hasError('required')" class="text-danger">{{appConstants.ER001('パスワード')}}</div>
+                    <div *ngIf="employeeLoginPasswordControl.hasError('minlength')" class="text-danger">{{appConstants.ER007('パスワード')}}</div>
+                    <div *ngIf="employeeLoginPasswordControl.hasError('maxlength')" class="text-danger">{{appConstants.ER007('パスワード')}}</div>
+                  </div>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">パスワード（確認）:<span class="note-red">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10">
+                  <!-- Hiển thị thông báo lỗi -->
+                  <input type="password" class="form-control" formControlName="employeeLoginRePassword" required maxlength="50" minlength="8"/>
+                  <div *ngIf="employeeLoginRePasswordControl.invalid && (employeeLoginRePasswordControl.dirty || employeeLoginRePasswordControl.touched)">
+                    <div *ngIf="employeeLoginRePasswordControl.hasError('required')" class="text-danger">パスワードは必須です。</div>
+                    <div *ngIf="employeeLoginRePasswordControl.hasError('passwordMismatch')" class="text-danger">{{appConstants.ER017('パスワード（確認）')}}</div>
+                  </div>
+                </div>
+              </li>              
+              <li class="title mt-12">日本語能力</li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">資格:</i></label>
+                <div class="col-sm col-sm-10">
+                  <select class="form-control" formControlName="certificationName" (change)="changeCertification()">
+                    <option value="">選択してください</option>
+                    <option *ngFor="let c of listCertifications" [value]="c.certificationName">
+                      {{ c.certificationName }}
+                    </option>
+                  </select>
+                </div>
+              </li>              
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2">
+                  <i class="relative">資格交付日:<span class="note-red" *ngIf="isCertificationSelected">*</span></i>
+                </label>
+                <div class="col-sm col-sm-10 d-flex">
+                  <!-- Hiển thị thông báo lỗi -->
+                  <div class="input-group date datepicker" data-date-format="yyyy/mm/dd">
+                    <input class="form-control" readonly type="text" formControlName="certificationStartDate"  [bsConfig]="datepickerConfig" bsDatepicker />
+                    <div *ngIf="certificationStartDateControl.invalid && (certificationStartDateControl.dirty || certificationStartDateControl.touched)" class="col-sm-10 offset-sm-2 text-danger">
+                      <div *ngIf="certificationStartDateControl.hasError('required')">{{appConstants.ER001('資格交付日')}}</div>
+                    </div>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                  </div>
+                </div>
+              </li>
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">失効日:<span class="note-red" *ngIf="isCertificationSelected">*</span></i></label>
+                <div class="col-sm col-sm-10 d-flex">
+                  <div class="input-group date datepicker" data-date-format="yyyy/mm/dd">
+                    <!-- Hiển thị thông báo lỗi -->
+                    <input class="form-control" readonly type="text" formControlName="certificationEndDate" name="certificationEndDate" [bsConfig]="datepickerConfig" bsDatepicker  />
+                    <div *ngIf="certificationEndDateControl.invalid && (certificationEndDateControl.dirty || certificationEndDateControl.touched)" class="col-sm-10 offset-sm-2 text-danger">
+                      <div *ngIf="certificationEndDateControl.hasError('required')" class="text-danger">{{appConstants.ER001('失効日')}}</div>
+                      <div *ngIf="certificationEndDateControl.hasError('invalidExpirationDate')" class="text-danger">{{appConstants.ER012('失効日', '資格交付日')}}</div>
+                    </div>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                  </div>                  
+                </div>               
+              </li>                                      
+              <li class="form-group row d-flex">
+                <label class="col-form-label col-sm-2"><i class="relative">点数:<span class="note-red" *ngIf="isCertificationSelected">*</span></i></label>
+                <div class="col-sm col-sm-10">
+                  <!-- Hiển thị thông báo lỗi -->
+                  <input type="text" class="form-control" formControlName="employeeCertificationScore" name="employeeCertificationScore" maxlength="4"/>
+                  <div *ngIf="employeeCertificationScoreControl.invalid && (employeeCertificationScoreControl.dirty || employeeCertificationScoreControl.touched)" class="text-danger">
+                    <div *ngIf="employeeCertificationScoreControl.hasError('required')" class="text-danger">{{appConstants.ER001('点数')}}</div>
+                    <div *ngIf="employeeCertificationScoreControl.hasError('pattern')" class="text-danger">{{appConstants.ER018('点数')}}</div>
+                  </div>
+                </div>
+              </li>             
+              <li class="form-group row d-flex">
+                <div class="btn-group col-sm col-sm-10 ml">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    (click)="handleOk()"
+                  >
+                    確認
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    (click)="handleCancel()"
+                  >
+                    戻る
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</main>

@@ -1,0 +1,24 @@
+<main>
+  <div class="container">
+    <app-header></app-header>
+    <div class="content">
+      <div class="content-main">
+        <!-- <div class="notification-box">
+          <h1 class="title note-err">{{errorMessage}}</h1>
+          <button type="button" class="btn btn-primary btn-sm" (click)="goToADM002()">OK</button>
+        </div> -->
+        <div class="notification-box">
+          <ng-container *ngIf="errorMessage; else notFoundMessage">
+            <h1 class="title note-err">{{errorMessage}}</h1>
+            <button type="button" class="btn btn-primary btn-sm" (click)="goToADM002()">OK</button>
+          </ng-container>
+          <ng-template #notFoundMessage>
+            <h1 class="title note-err">ページが見つかりません。</h1>
+            <button type="button" class="btn btn-primary btn-sm" (click)="goToADM002()">OK</button>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</main>
